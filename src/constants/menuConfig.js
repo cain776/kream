@@ -36,6 +36,13 @@ export const menuConfig = [
     ]
   },
   {
+    path: '/billing',
+    label: '빌링 대사',
+    icon: '💳',
+    title: '빌링 대사',
+    description: 'PG, VAN, 현금 결제 대사를 관리합니다'
+  },
+  {
     path: '/transactions',
     label: '거래 내역',
     icon: '📋',

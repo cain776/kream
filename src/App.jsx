@@ -6,6 +6,7 @@ import Dashboard from './pages/Dashboard'
 import SettlementDomesticC2C from './pages/SettlementDomesticC2C'
 import SettlementList from './pages/SettlementList'
 import SettlementDetail from './pages/SettlementDetail'
+import BillingReconciliation from './pages/BillingReconciliation'
 import TransactionList from './pages/TransactionList'
 import TransactionManual from './pages/TransactionManual'
 import HoldManagement from './pages/HoldManagement'
@@ -60,6 +61,7 @@ function App() {
         <Route path="settlements/wms" element={<SettlementList />} />
         <Route path="settlements" element={<SettlementList />} />
         <Route path="settlements/:id" element={<SettlementDetail />} />
+        <Route path="billing" element={<BillingReconciliation />} />
         <Route path="transactions/manual" element={<TransactionManual />} />
         <Route path="transactions/all" element={<TransactionList />} />
         <Route path="transactions" element={<TransactionList />} />

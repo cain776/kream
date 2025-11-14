@@ -51,10 +51,10 @@ function Sidebar({ isOpen }) {
                     aria-expanded={expandedMenu === item.path}
                     aria-label={`${item.label} 메뉴`}
                   >
-                    <span className="text-xl flex-shrink-0">{item.icon}</span>
+                    <span className="text-xl flex-shrink-0 flex items-center justify-center w-6">{item.icon}</span>
                     {isOpen && (
                       <>
-                        <span className="flex-1 text-left whitespace-nowrap">
+                        <span className="flex-1 text-left whitespace-nowrap leading-6">
                           {item.label}
                         </span>
                         <svg 
@@ -84,8 +84,8 @@ function Sidebar({ isOpen }) {
                               }`
                             }
                           >
-                            <span className="text-base">{subItem.icon}</span>
-                            <span className="whitespace-nowrap">{subItem.label}</span>
+                            <span className="text-base flex items-center justify-center w-5">{subItem.icon}</span>
+                            <span className="whitespace-nowrap leading-5">{subItem.label}</span>
                           </NavLink>
                         </li>
                       ))}
@@ -107,9 +107,9 @@ function Sidebar({ isOpen }) {
                   }
                   title={!isOpen ? item.label : ''}
                 >
-                  <span className="text-xl flex-shrink-0">{item.icon}</span>
+                  <span className="text-xl flex-shrink-0 flex items-center justify-center w-6">{item.icon}</span>
                   {isOpen && (
-                    <span className="whitespace-nowrap">
+                    <span className="whitespace-nowrap leading-6">
                       {item.label}
                     </span>
                   )}

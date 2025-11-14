@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 필터 UI</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body{font-family:"Pretendard",sans-serif}
+        .floating-wrapper{position:relative;display:inline-block}
+        .floating-input{width:100%;height:44px;padding:12px 12px 4px;border:1px solid #D1D5DB;border-radius:8px;font-size:14px;color:#111827;background:#fff;transition:all .2s}
+        select.floating-input{padding-right:36px;background:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e") no-repeat right 10px center/1.5em;appearance:none}
+        select.floating-input.has-value{padding-right:60px}
+        .floating-input:focus{outline:none;border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.1)}
+        .select-clear{position:absolute;right:32px;top:50%;transform:translateY(-50%);width:18px;height:18px;background:#9CA3AF;border-radius:50%;display:none;align-items:center;justify-content:center;cursor:pointer;transition:background .2s}
+        .select-clear:hover{background:#6B7280}
+        .select-clear::before,.select-clear::after{content:'';position:absolute;width:10px;height:2px;background:#fff}
+        .select-clear::before{transform:rotate(45deg)}
+        .select-clear::after{transform:rotate(-45deg)}
+        .floating-input.has-value~.select-clear{display:flex}
+        .floating-label{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;color:#9CA3AF;pointer-events:none;transition:all .2s;background:#fff;padding:0 4px}
+        input[type="date"]+.floating-label,.floating-input:focus+.floating-label,.floating-input.has-value+.floating-label{top:-8px;transform:translateY(0);font-size:12px;font-weight:500;color:#6B7280}
+        .floating-input:focus+.floating-label{color:#3B82F6}
+        .date-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:#9CA3AF}
+        input[type="date"]::-webkit-calendar-picker-indicator{position:absolute;inset:0;opacity:0;cursor:pointer}
+        .quick-btn,.action-btn{height:44px;font-size:14px;font-weight:600;border-radius:8px;transition:all .15s;cursor:pointer;display:flex;align-items:center;justify-content:center}
+        .quick-btn{padding:0 20px}
+        .quick-btn.active{background:#111827;color:#fff;border:1px solid #111827}
+        .quick-btn:not(.active){background:#fff;color:#111827;border:1px solid #D1D5DB}
+        .quick-btn:not(.active):hover{background:#111827;color:#fff;border-color:#111827}
+        .quick-btn.active:hover{background:#374151;border-color:#374151}
+        .action-btn{border:none}
+        .action-btn{padding:0 24px;white-space:nowrap}
+        .btn-reset{background:#fff;border:1px solid #D1D5DB;color:#6B7280}
+        .btn-reset:hover{background:#F9FAFB;border-color:#9CA3AF}
+        .btn-submit{background:#3B82F6;color:#fff}
+        .btn-submit:hover{background:#2563EB}
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-[1600px] p-8 bg-white rounded-xl shadow-lg">
+        <form class="flex flex-nowrap items-center gap-4">
+            <div class="floating-wrapper w-40 flex-shrink-0">
+                <select id="category" class="floating-input"><option value="" disabled selected></option><option value="opt1">옵션 1</option><option value="opt2">옵션 2</option><option value="opt3">옵션 3</option></select>
+                <label class="floating-label">대구분</label><span class="select-clear"></span>
+            </div>
+            <div class="floating-wrapper w-40 flex-shrink-0">
+                <select id="status" class="floating-input"><option value="" disabled selected></option><option value="paid">결제완료</option><option value="shipping">배송중</option><option value="delivered">배송완료</option><option value="canceled">주문취소</option></select>
+                <label class="floating-label">주문상태</label><span class="select-clear"></span>
+            </div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <div class="floating-wrapper date-wrapper w-40">
+                    <input id="start-date" type="date" class="floating-input pr-10"><label class="floating-label">시작일</label>
+                    <svg class="date-icon w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+                </div>
+                <span class="text-gray-400">~</span>
+                <div class="floating-wrapper date-wrapper w-40">
+                    <input id="end-date" type="date" class="floating-input pr-10"><label class="floating-label">종료일</label>
+                    <svg class="date-icon w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/></svg>
+                </div>
+            </div>
+            <div class="h-8 w-px bg-gray-300 flex-shrink-0"></div>
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <button type="button" class="quick-btn" data-period="1year">1년</button>
+                <button type="button" class="quick-btn" data-period="1month">한달</button>
+                <button type="button" class="quick-btn" data-period="lastmonth">전월</button>
+                <button type="button" class="quick-btn active" data-period="thismonth">당월</button>
+                <button type="button" class="quick-btn" data-period="today">오늘</button>
+            </div>
+            <div class="ml-auto flex gap-3">
+                <button type="reset" class="action-btn btn-reset">초기화</button>
+                <button type="submit" class="action-btn btn-submit">조회</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded',()=>{const $=e=>document.querySelector(e),$$=e=>document.querySelectorAll(e),startDate=$('#start-date'),endDate=$('#end-date'),quickBtns=$$('.quick-btn'),form=$('form'),allInputs=$$('.floating-input');const updateLabel=i=>i.classList.toggle('has-value',!!i.value);allInputs.forEach(i=>{['change','input','blur'].forEach(e=>i.addEventListener(e,()=>updateLabel(i)));updateLabel(i)});$$('.select-clear').forEach(c=>c.addEventListener('click',e=>{e.preventDefault();const s=c.closest('.floating-wrapper').querySelector('select');s.value='';updateLabel(s)}));const formatDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const setDateRange=p=>{const t=new Date();let s=new Date(),e=new Date();if(p==='today')s=e=t;else if(p==='thismonth'){s=new Date(t.getFullYear(),t.getMonth(),1);e=t}else if(p==='lastmonth'){s=new Date(t.getFullYear(),t.getMonth()-1,1);e=new Date(t.getFullYear(),t.getMonth(),0)}else if(p==='1month'){s=new Date(t.setMonth(t.getMonth()-1));e=new Date()}else if(p==='1year'){s=new Date(t.setFullYear(t.getFullYear()-1));e=new Date()}startDate.value=formatDate(s);endDate.value=formatDate(e);updateLabel(startDate);updateLabel(endDate)};quickBtns.forEach(b=>b.addEventListener('click',e=>{e.preventDefault();quickBtns.forEach(x=>x.classList.remove('active'));b.classList.add('active');setDateRange(b.dataset.period)}));form.addEventListener('reset',()=>setTimeout(()=>{allInputs.forEach(updateLabel);quickBtns.forEach(b=>b.classList.remove('active'));$('[data-period="thismonth"]').classList.add('active');setDateRange('thismonth')},0));form.addEventListener('submit',e=>{e.preventDefault();console.log('검색 조건:',{category:$('#category').value,status:$('#status').value,startDate:startDate.value,endDate:endDate.value});alert('조회 완료!\n콘솔을 확인하세요.')})});
+    </script>
+</body>
+</html>
+

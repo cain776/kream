@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>검색 필터 UI</title>
+    
+    <!-- Pretendard 폰트 CDN -->
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: "Pretendard", sans-serif;
+        }
+
+        /* 플로팅 라벨 컨테이너 */
+        .floating-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Input/Select 기본 스타일 */
+        .floating-input {
+            width: 100%;
+            height: 44px;
+            padding: 12px 12px 4px 12px;
+            border: 1px solid #D1D5DB;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #111827;
+            background: white;
+            transition: all 0.2s;
+        }
+
+        /* Select 화살표 위치 조정 */
+        select.floating-input {
+            padding-right: 36px;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 10px center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+        }
+
+        /* Select에 값이 있을 때 X 버튼 표시를 위한 여백 */
+        select.floating-input.has-value {
+            padding-right: 60px;
+        }
+
+        .floating-input:focus {
+            outline: none;
+            border-color: #3B82F6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Select 초기화 버튼 */
+        .select-clear {
+            position: absolute;
+            right: 32px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            background: #9CA3AF;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .select-clear:hover {
+            background: #6B7280;
+        }
+
+        .select-clear::before,
+        .select-clear::after {
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 2px;
+            background: white;
+        }
+
+        .select-clear::before {
+            transform: rotate(45deg);
+        }
+
+        .select-clear::after {
+            transform: rotate(-45deg);
+        }
+
+        .floating-input.has-value ~ .select-clear {
+            display: flex;
+        }
+
+        /* 라벨 기본 스타일 - 입력창 가운데 */
+        .floating-label {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            color: #9CA3AF;
+            pointer-events: none;
+            transition: all 0.2s ease;
+            background: white;
+            padding: 0 4px;
+        }
+
+        /* Date input의 라벨은 항상 위에 (날짜 텍스트와 겹침 방지) */
+        input[type="date"] + .floating-label {
+            top: -8px;
+            transform: translateY(0);
+            font-size: 12px;
+            font-weight: 500;
+            color: #6B7280;
+        }
+
+        /* 값이 있거나 포커스 시 라벨이 위로 이동 */
+        .floating-input:focus + .floating-label,
+        .floating-input.has-value + .floating-label {
+            top: -8px;
+            transform: translateY(0);
+            font-size: 12px;
+            font-weight: 500;
+            color: #6B7280;
+        }
+
+        .floating-input:focus + .floating-label {
+            color: #3B82F6;
+        }
+
+        /* Date input 아이콘 */
+        .date-wrapper {
+            position: relative;
+        }
+
+        .date-icon {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: #9CA3AF;
+        }
+
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        /* 퀵 버튼 스타일 */
+        .quick-btn {
+            height: 44px;
+            padding: 0 20px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.15s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-btn.active {
+            background: #111827;
+            color: white;
+            border: 1px solid #111827;
+        }
+
+        .quick-btn:not(.active) {
+            background: white;
+            color: #111827;
+            border: 1px solid #D1D5DB;
+        }
+
+        .quick-btn:not(.active):hover {
+            background: #111827;
+            color: white;
+            border-color: #111827;
+        }
+
+        .quick-btn.active:hover {
+            background: #374151;
+            border-color: #374151;
+        }
+
+        /* 액션 버튼 스타일 통일 */
+        .action-btn {
+            height: 44px;
+            padding: 0 24px;
+            font-size: 14px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+        }
+
+        .btn-reset {
+            background: white;
+            border: 1px solid #D1D5DB;
+            color: #6B7280;
+        }
+
+        .btn-reset:hover {
+            background: #F9FAFB;
+            border-color: #9CA3AF;
+        }
+
+        .btn-submit {
+            background: #3B82F6;
+            border: none;
+            color: white;
+        }
+
+        .btn-submit:hover {
+            background: #2563EB;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-[1600px] p-8 bg-white rounded-xl shadow-lg">
+        <form class="flex flex-nowrap items-center gap-4">
+            
+            <!-- 대구분 Select -->
+            <div class="floating-wrapper w-40 flex-shrink-0">
+                <select id="category" class="floating-input">
+                    <option value="" disabled selected></option>
+                    <option value="opt1">옵션 1</option>
+                    <option value="opt2">옵션 2</option>
+                    <option value="opt3">옵션 3</option>
+                </select>
+                <label class="floating-label">대구분</label>
+                <span class="select-clear"></span>
+            </div>
+
+            <!-- 주문상태 Select -->
+            <div class="floating-wrapper w-40 flex-shrink-0">
+                <select id="status" class="floating-input">
+                    <option value="" disabled selected></option>
+                    <option value="paid">결제완료</option>
+                    <option value="shipping">배송중</option>
+                    <option value="delivered">배송완료</option>
+                    <option value="canceled">주문취소</option>
+                </select>
+                <label class="floating-label">주문상태</label>
+                <span class="select-clear"></span>
+            </div>
+
+            <!-- Date Range -->
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <!-- 시작일 -->
+                <div class="floating-wrapper date-wrapper w-40">
+                    <input id="start-date" type="date" class="floating-input pr-10">
+                    <label class="floating-label">시작일</label>
+                    <svg class="date-icon w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+
+                <span class="text-gray-400">~</span>
+
+                <!-- 종료일 -->
+                <div class="floating-wrapper date-wrapper w-40">
+                    <input id="end-date" type="date" class="floating-input pr-10">
+                    <label class="floating-label">종료일</label>
+                    <svg class="date-icon w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+
+            <!-- 구분선 -->
+            <div class="h-8 w-px bg-gray-300 flex-shrink-0"></div>
+
+            <!-- 퀵 버튼들 -->
+            <div class="flex items-center gap-2 flex-shrink-0">
+                <button type="button" class="quick-btn" data-period="1year">1년</button>
+                <button type="button" class="quick-btn" data-period="1month">한달</button>
+                <button type="button" class="quick-btn" data-period="lastmonth">전월</button>
+                <button type="button" class="quick-btn active" data-period="thismonth">당월</button>
+                <button type="button" class="quick-btn" data-period="today">오늘</button>
+            </div>
+
+            <!-- 액션 버튼 -->
+            <div class="ml-auto flex gap-3">
+                <button type="reset" class="action-btn btn-reset">
+                    초기화
+                </button>
+                <button type="submit" class="action-btn btn-submit">
+                    조회
+                </button>
+            </div>
+
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const startDate = document.getElementById('start-date');
+            const endDate = document.getElementById('end-date');
+            const quickBtns = document.querySelectorAll('.quick-btn');
+            const form = document.querySelector('form');
+            const allInputs = document.querySelectorAll('.floating-input');
+
+            // has-value 클래스 업데이트 함수
+            function updateFloatingLabel(input) {
+                if (input.value && input.value !== '') {
+                    input.classList.add('has-value');
+                } else {
+                    input.classList.remove('has-value');
+                }
+            }
+
+            // 모든 input/select에 이벤트 리스너 추가
+            allInputs.forEach(input => {
+                // change 이벤트 (select, date)
+                input.addEventListener('change', () => updateFloatingLabel(input));
+                // input 이벤트 (실시간)
+                input.addEventListener('input', () => updateFloatingLabel(input));
+                // blur 이벤트 (포커스 아웃)
+                input.addEventListener('blur', () => updateFloatingLabel(input));
+                
+                // 초기 상태 체크
+                updateFloatingLabel(input);
+            });
+
+            // Select 초기화 버튼 이벤트
+            document.querySelectorAll('.select-clear').forEach(clearBtn => {
+                clearBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const wrapper = clearBtn.closest('.floating-wrapper');
+                    const select = wrapper.querySelector('select');
+                    select.value = '';
+                    updateFloatingLabel(select);
+                });
+            });
+
+            // 날짜 포맷 함수
+            function formatDate(date) {
+                const y = date.getFullYear();
+                const m = String(date.getMonth() + 1).padStart(2, '0');
+                const d = String(date.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            // 날짜 설정 함수
+            function setDateRange(period) {
+                const today = new Date();
+                let start = new Date();
+                let end = new Date();
+
+                switch(period) {
+                    case 'today':
+                        start = today;
+                        end = today;
+                        break;
+                    case 'thismonth':
+                        start = new Date(today.getFullYear(), today.getMonth(), 1);
+                        end = today;
+                        break;
+                    case 'lastmonth':
+                        start = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                        end = new Date(today.getFullYear(), today.getMonth(), 0);
+                        break;
+                    case '1month':
+                        start = new Date(today.setMonth(today.getMonth() - 1));
+                        end = new Date();
+                        break;
+                    case '1year':
+                        start = new Date(today.setFullYear(today.getFullYear() - 1));
+                        end = new Date();
+                        break;
+                }
+
+                startDate.value = formatDate(start);
+                endDate.value = formatDate(end);
+                
+                // 날짜 설정 후 라벨 업데이트
+                updateFloatingLabel(startDate);
+                updateFloatingLabel(endDate);
+            }
+
+            // 퀵 버튼 클릭 이벤트
+            quickBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // 모든 버튼 비활성화
+                    quickBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // 클릭한 버튼 활성화
+                    btn.classList.add('active');
+                    
+                    // 날짜 설정
+                    const period = btn.dataset.period;
+                    setDateRange(period);
+                });
+            });
+
+            // 폼 리셋
+            form.addEventListener('reset', () => {
+                setTimeout(() => {
+                    // 모든 입력값 초기화 후 라벨 업데이트
+                    allInputs.forEach(input => {
+                        updateFloatingLabel(input);
+                    });
+                    
+                    // 기본값: 당월
+                    quickBtns.forEach(b => b.classList.remove('active'));
+                    document.querySelector('[data-period="thismonth"]').classList.add('active');
+                    setDateRange('thismonth');
+                }, 0);
+            });
+
+            // 폼 제출
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                const formData = {
+                    category: document.getElementById('category').value,
+                    status: document.getElementById('status').value,
+                    startDate: startDate.value,
+                    endDate: endDate.value
+                };
+                
+                console.log('검색 조건:', formData);
+                alert('조회 완료!\n콘솔을 확인하세요.');
+            });
+
+            // 초기 날짜 설정 (당월)
+            // 페이지 로드 시에는 날짜를 설정하지 않음 (플로팅 라벨 효과를 보기 위해)
+            // 사용자가 퀵 버튼을 클릭하면 날짜가 설정됨
+        });
+    </script>
+
+</body>
+</html>

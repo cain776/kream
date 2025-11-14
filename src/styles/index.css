@@ -1,0 +1,104 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #fafafa;
+  color: #222;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+button {
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+@layer components {
+  /* 표준 버튼 스타일 */
+  .btn {
+    @apply px-4 py-2 rounded-lg font-medium text-sm inline-flex items-center gap-2 transition-all duration-200;
+  }
+
+  /* 기본 버튼 (조회, 다운로드, 초기화 등) */
+  .btn-primary {
+    @apply bg-white text-gray-900 border border-gray-900 hover:bg-gray-900 hover:text-white;
+  }
+
+  /* 보조 버튼 (회색 테두리) */
+  .btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-900 hover:text-white hover:border-gray-900;
+  }
+
+  /* 강조 버튼 (파란색 - 주요 액션) */
+  .btn-accent {
+    @apply bg-blue-600 text-white border border-blue-600 hover:bg-blue-700 hover:border-blue-700;
+  }
+
+  /* 성공 버튼 (초록색 - 저장, 완료 등) */
+  .btn-success {
+    @apply bg-green-600 text-white border border-green-600 hover:bg-green-700 hover:border-green-700;
+  }
+
+  /* 위험 버튼 (빨간색 - 삭제 등) */
+  .btn-danger {
+    @apply bg-white text-red-600 border border-red-600 hover:bg-red-600 hover:text-white;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-kream-gray-200 p-6 transition-all duration-200;
+  }
+
+  .card-hover {
+    @apply card hover:shadow-kream hover:-translate-y-0.5;
+  }
+
+  .badge {
+    @apply inline-block px-2.5 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-pending {
+    @apply bg-orange-50 text-orange-600;
+  }
+
+  .badge-completed {
+    @apply bg-green-50 text-green-600;
+  }
+
+  .badge-hold {
+    @apply bg-red-50 text-red-600;
+  }
+
+  .input {
+    @apply px-3 py-2 border border-kream-gray-200 rounded-lg text-sm transition-all duration-200;
+  }
+
+  .table-header {
+    @apply bg-kream-gray-50 border-b border-kream-gray-200;
+  }
+
+  .table-row {
+    @apply border-b border-kream-gray-200 hover:bg-kream-gray-50 transition-colors;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* 스크롤바 숨기기 (탭바용) */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+}
+

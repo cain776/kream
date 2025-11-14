@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, BrowserRouter } from 'react-router-dom'
 import Layout from './components/Layout'
 import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
@@ -46,12 +46,13 @@ import SystemAuditLog from './pages/SystemAuditLog'
 
 function App() {
   return (
-    <Routes>
-      {/* 로그인 페이지 (인증 불필요) */}
-      <Route path="/login" element={<Login />} />
-      
-      {/* 보호된 라우트 (인증 필요) */}
-      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+    <BrowserRouter basename="/kream">
+      <Routes>
+        {/* 로그인 페이지 (인증 불필요) */}
+        <Route path="/login" element={<Login />} />
+        
+        {/* 보호된 라우트 (인증 필요) */}
+        <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="settlements/domestic-c2c" element={<SettlementDomesticC2C />} />
@@ -99,6 +100,7 @@ function App() {
         <Route path="system/audit-log" element={<SystemAuditLog />} />
       </Route>
     </Routes>
+    </BrowserRouter>
   )
 }
 
